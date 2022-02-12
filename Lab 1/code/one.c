@@ -8,7 +8,7 @@
 
 int main (int argc, char* argv[]) {
 
-    printf ("\nStarting..\n\n");
+    printf ("\nStarting Program..\n\n");
 
 
     /* Task 1.a */
@@ -19,13 +19,16 @@ int main (int argc, char* argv[]) {
     // Check file existence
     returnval = access (filepath, F_OK);
     if (returnval == 0)
-        printf ("\b%s file exists\n", filepath);
+        printf ("\b%s file exists.\n", filepath);
     else {
         if (errno == ENOENT)
-        printf ("%s does not exist\n", filepath);
+            printf ("%s does not exist.\n", filepath);
         else if (errno == EACCES)
-        printf ("%s is not accessible\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
+
+
+    /* TASK 1.a */    
 
     // Check read access
     returnval = access (filepath, R_OK);
@@ -33,9 +36,9 @@ int main (int argc, char* argv[]) {
         printf ("\b%s file is readable.\n", filepath);
     else {
         if (errno == ENOENT)
-        printf ("%s does not exist\n", filepath);
+            printf ("%s does not exist. Cannot be read from.\n", filepath);
         else if (errno == EACCES)
-        printf ("%s is not accessible\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
 
     // Check write access
@@ -44,44 +47,44 @@ int main (int argc, char* argv[]) {
         printf ("\b%s file is writeable.\n", filepath);
     else {
         if (errno == ENOENT)
-        printf ("%s does not exist\n", filepath);
+            printf ("%s does not exist. Cannot be written to.\n", filepath);
         else if (errno == EACCES)
-        printf ("%s is not accessible\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
 
 
-    /* Task 1.b */
+    /* TASK 1.b */
 
     // Creates new file and opens it
     int fd;
 
+    // checks if second arg is not provided in the cli
     if(2 != argc) {
         printf("\n Usage : \n");
         return 1;
     }
 
+    // setting a no problem error value
     errno = 0;
-    // opens and creates a file if it DNE
-    fd = open(argv[1], O_RDONLY|O_CREAT);
-    // fd = open(argv[1], O_RDONLY);
 
+    // opens and creates a file if it DNE
+    // Sets file to read and write mode for CURRENT owner/usr
+    fd = open(argv[1], O_RDONLY|O_CREAT, S_IRWXU);
+    
     if(-1 == fd) {
-        printf("\n open() failed with error [%s]\n", strerror(errno));
+        printf("\nOpen failed with error [%s]\n", strerror(errno));
         return 1;
     }
     else {
-        printf("\n Open() Successful\n");
-    
-        /* open() succeeded, now one can do read operations on the file
-        since we opened it in read-only mode. Also once done with
-        processing, the file needs to be closed. */
+        printf("\n\bFile Opened Successfully.\n");
+        // Therefore do other things.
+
 
     }
 
-
-
-
     close(fd);
-    printf ("\n\nEnding..\n\n");
+    printf("\n\bFile Closed Successfully.\n");
+
+    printf ("\n\nEnding Program..\n\n");
     return 0;
 }

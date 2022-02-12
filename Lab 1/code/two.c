@@ -5,36 +5,30 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h> 
-#include <limits.h>
-
 
 int main (int argc, char* argv[]) {
 
-    printf ("\nStarting..\n\n");
-
-    /* TODO 
-        1. takes file as argv
-        2. reports if it doesn't exist or cant be opened(no read perm)
-        3. use open() -> read() -> write() -> close()
-    */
+    printf ("\nStarting Program..\n\n");
 
 
-    /* Task 2 */
+    /* Task 1.a */
 
     char* filepath = argv[1];
     int returnval;
 
     // Check file existence
     returnval = access (filepath, F_OK);
-    if (returnval == 0) 
+    if (returnval == 0)
         printf ("\b%s file exists.\n", filepath);
     else {
-        if (errno == ENOENT) {
-        printf ("%s does not exist\nEnding Program", filepath);
-        }
+        if (errno == ENOENT)
+            printf ("%s does not exist.\n", filepath);
         else if (errno == EACCES)
-            printf ("%s is not accessible\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
+
+
+    /* TASK 1.a */    
 
     // Check read access
     returnval = access (filepath, R_OK);
@@ -42,9 +36,9 @@ int main (int argc, char* argv[]) {
         printf ("\b%s file is readable.\n", filepath);
     else {
         if (errno == ENOENT)
-            printf ("%s does not exist\n", filepath);
+            printf ("%s does not exist. Cannot be read from.\n", filepath);
         else if (errno == EACCES)
-            printf ("%s is not accessible for read.\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
 
     // Check write access
@@ -53,32 +47,36 @@ int main (int argc, char* argv[]) {
         printf ("\b%s file is writeable.\n", filepath);
     else {
         if (errno == ENOENT)
-            printf ("%s does not exist\n", filepath);
+            printf ("%s does not exist. Cannot be written to.\n", filepath);
         else if (errno == EACCES)
-            printf ("%s is not accessible for write.\n", filepath);
+            printf ("%s is not accessible.\n", filepath);
     }
 
 
-    /* Task 2 */
+    /* TASK 1.b */
 
     // Creates new file and opens it
     int fd;
 
+    // checks if second arg is not provided in the cli
     if(2 != argc) {
         printf("\n Usage : \n");
         return 1;
     }
 
+    // setting a no problem error value
     errno = 0;
-    // opens and creates a file if it DNE
-    fd = open(argv[1], O_RDONLY|O_CREAT);
-    // fd = open(argv[1], O_RDONLY);
 
+    // opens and creates a file if it DNE
+    // Sets file to read and write mode for CURRENT owner/usr
+    fd = open(argv[1], O_RDONLY|O_CREAT, S_IRWXU);
+    
     if(-1 == fd) {
-        printf("\nOpen() failed with error [%s]\n", strerror(errno));
+        printf("\nOpen failed with error [%s]\n", strerror(errno));
         return 1;
     }
     else {
+        // Therefore do other things.
         printf("\nFile Opened Succesfully.\n");
         
         char data[1024]; 
@@ -94,10 +92,13 @@ int main (int argc, char* argv[]) {
         while ((length = read (fd, data, num_bytes)) > 0 ) {
             printf("\nData in File:\n%s", data);
         }
+        
 
     }
 
     close(fd);
-    printf ("\n\nEnding..\n\n");
+    printf("\n\bFile Closed Successfully.\n");
+
+    printf ("\n\nEnding Program..\n\n");
     return 0;
 }
