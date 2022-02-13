@@ -10,11 +10,11 @@ int main (int argc, char* argv[]) {
 
     // checks if correct arguments are given
     if(3 != argc) {
-        printf("\nInccorrect Number of Arguments Provided.\n");
+        printf("\nPLease provide a source and destination location.\n");
         return 1;
     }
 
-    printf ("\nStarting Program..\n\n");
+    printf ("\nStarting Program..\n------------------\n\n");
 
     // Creates new file and opens it
     int fd;
@@ -27,13 +27,13 @@ int main (int argc, char* argv[]) {
         unlink(argv[2]);
         printf("\nDeleting prev file.\n");
     }
-
+		
 
     // opens and creates a file if it DNE
     // Sets file to read and write mode for CURRENT owner/usr
     fd = open(argv[1], O_RDONLY);
 
-    destination = open(argv[2], O_CREAT | O_RDWR, S_IRWXU);
+        destination = open(argv[2], O_CREAT | O_RDWR, S_IRWXU);
     
     if(-1 == fd) {
         printf("\nOpen failed with error [%s]\n", strerror(errno));
@@ -41,22 +41,35 @@ int main (int argc, char* argv[]) {
     }
     else {
 
-        printf("\nFile Opened Successfully.\n");
-
-
-        char buffer[BUFSIZ]; // Declare an array of char called buffer that has a size of BUFSIZE (a macro constant)
+        char buffer[100]; 
         int length;
         
-		while ((length = read(fd, buffer, BUFSIZ)) > 0) {	// rd is assigned the return value of read, # of characters that are read from fd
-			write(destination, buffer, length);						// This write to the terminal whatever the 'read' syscall reads from the file
+		while ((length = read(fd, buffer, 100)) > 0) {	
+
+            for(int i = 0; i < length; i++) {
+                if (buffer[i] == '1')
+                    buffer[i] = 'L';
+            }
+
+            buffer[length] = 'X';
+            buffer[length + 1] = 'Y';
+            buffer[length + 2] = 'Z';
+
+			write(destination, buffer, length + 3);
+            
+
+
 		}
-    
+        write(destination, "\n", 1);
+        printf ("\nCompleted Copy\n");
+
+
 
     }
 
     close(fd);
-    printf("\n\n\bFile Closed Successfully.\n");
+    close(destination);
 
-    printf ("\nEnding Program..\n\n");
+    printf ("\n\nEnding Program..\n----------------\n\n");
     return 0;
 }
