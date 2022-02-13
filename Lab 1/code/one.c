@@ -8,6 +8,12 @@
 
 int main (int argc, char* argv[]) {
 
+    // checks if correct arguments are given
+    if(2 != argc) {
+        printf("\n Usage : \n");
+        return 1;
+    }
+
     printf ("\nStarting Program..\n\n");
 
 
@@ -58,11 +64,7 @@ int main (int argc, char* argv[]) {
     // Creates new file and opens it
     int fd;
 
-    // checks if second arg is not provided in the cli
-    if(2 != argc) {
-        printf("\n Usage : \n");
-        return 1;
-    }
+ 
 
     // setting a no problem error value
     errno = 0;
@@ -78,6 +80,10 @@ int main (int argc, char* argv[]) {
     else {
         printf("\n\bFile Opened Successfully.\n");
         // Therefore do other things.
+
+
+        
+
 
 
     }

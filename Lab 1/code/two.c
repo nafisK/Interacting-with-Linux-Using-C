@@ -8,6 +8,12 @@
 
 int main (int argc, char* argv[]) {
 
+    // checks if correct arguments are given
+    if(2 != argc) {
+        printf("\n Usage : \n");
+        return 1;
+    }
+
     printf ("\nStarting Program..\n\n");
 
 
@@ -58,47 +64,37 @@ int main (int argc, char* argv[]) {
     // Creates new file and opens it
     int fd;
 
-    // checks if second arg is not provided in the cli
-    if(2 != argc) {
-        printf("\n Usage : \n");
-        return 1;
-    }
+    
 
     // setting a no problem error value
     errno = 0;
 
     // opens and creates a file if it DNE
     // Sets file to read and write mode for CURRENT owner/usr
-    fd = open(argv[1], O_RDONLY|O_CREAT, S_IRWXU);
+    fd = open(argv[1], O_RDONLY|O_CREAT, S_IRWXU|S_IRGRP|S_IXGRP|S_IROTH);
     
     if(-1 == fd) {
         printf("\nOpen failed with error [%s]\n", strerror(errno));
         return 1;
     }
     else {
-        // Therefore do other things.
-        printf("\nFile Opened Succesfully.\n");
-        
-        char data[1024]; 
-        int num_bytes = 1024;
-        int length;
 
-        /* open() succeeded, now one can do read operations on the file
-        since we opened it in read-only mode. Also once done with
-        processing, the file needs to be closed. */
-        read(fd, data, num_bytes);
-        // write(fd, data, num_bytes);
-        // printf("\nData in File:\n%s", data);
-        while ((length = read (fd, data, num_bytes)) > 0 ) {
-            printf("\nData in File:\n%s", data);
-        }
+        printf("\nFile Opened Successfully.\n");
+
+
+        char buffer[BUFSIZ]; // Declare an array of char called buffer that has a size of BUFSIZE (a macro constant)
+        int length;
         
+		while ((length = read(fd, buffer, BUFSIZ)) > 0) {	// rd is assigned the return value of read, # of characters that are read from fd
+			write(1, buffer, length);						// This write to the terminal whatever the 'read' syscall reads from the file
+		}
+    
 
     }
 
     close(fd);
-    printf("\n\bFile Closed Successfully.\n");
+    printf("\n\n\bFile Closed Successfully.\n");
 
-    printf ("\n\nEnding Program..\n\n");
+    printf ("\nEnding Program..\n\n");
     return 0;
 }
