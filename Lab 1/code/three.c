@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
 
     // checks if correct arguments are given
     if(3 != argc) {
-        printf("\n Usage : \n");
+        printf("\nInccorrect Number of Arguments Provided.\n");
         return 1;
     }
 
