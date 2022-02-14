@@ -8,10 +8,6 @@
 
 int main (int argc, char* argv[]) {
 
-
-    // This program uses Linux System Calls to check file permissions.
-
-
     // checks if correct arguments are given
     if(2 != argc) {
         printf("\nPlease provide appropriate arguments.\n");
