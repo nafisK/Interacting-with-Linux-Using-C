@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
-    printf ("\n ------------------\n| Starting Program |\n ------------------\n\n");
+    printf ("\n ------------------\n| Starting Program |\n ------------------\n");
 
     // Vars needed for creating file, deleting and opening file 
     int fd;
@@ -38,7 +38,7 @@ int main (int argc, char* argv[]) {
         perror("open");
         return 1;  
     }
-    
+
     // opens file or creates a new one with read & write access
     destination = open(argv[2], O_CREAT | O_RDWR, S_IRWXU);
     

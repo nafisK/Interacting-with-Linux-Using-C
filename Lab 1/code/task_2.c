@@ -56,6 +56,6 @@ int main (int argc, char* argv[]) {
 
     // deleting descriptor of OS memory 
     close(fd);
-    printf ("\n ----------------\n| Ending Program |\n ----------------\n\n");
+    printf ("\n\n ----------------\n| Ending Program |\n ----------------\n\n");
     return 0;
 }
