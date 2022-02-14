@@ -8,16 +8,17 @@
 
 int main (int argc, char* argv[]) {
 
+
+    // This program uses Linux System Calls to check file permissions.
+
+
     // checks if correct arguments are given
     if(2 != argc) {
-        printf("\n Usage : \n");
+        printf("\nPlease provide appropriate arguments.\n");
         return 1;
     }
 
-    printf ("\nStarting Program..\n\n");
-
-
-    /* Task 1.a */
+    printf ("\n ------------------\n| Starting Program |\n ------------------\n\n");
 
     char* filepath = argv[1];
     int returnval;
@@ -33,11 +34,12 @@ int main (int argc, char* argv[]) {
             printf ("%s is not accessible.\n", filepath);
     }
 
-
     /* TASK 1.a */    
 
-    // Check read access
+    // Checks read access
     returnval = access (filepath, R_OK);
+    // Resetting Error Number
+    errno = 0;
     if (returnval == 0)
         printf ("\b%s file is readable.\n", filepath);
     else {
@@ -49,6 +51,8 @@ int main (int argc, char* argv[]) {
 
     // Check write access
     returnval = access (filepath, W_OK);
+    // Resetting Error Number
+    errno = 0;
     if (returnval == 0)
         printf ("\b%s file is writeable.\n", filepath);
     else {
@@ -58,39 +62,6 @@ int main (int argc, char* argv[]) {
             printf ("%s is not accessible.\n", filepath);
     }
 
-
-    /* TASK 1.b */
-
-    // Creates new file and opens it
-    int fd;
-
- 
-
-    // setting a no problem error value
-    errno = 0;
-
-    // opens and creates a file if it DNE
-    // Sets file to read and write mode for CURRENT owner/usr
-    fd = open(argv[1], O_RDONLY|O_CREAT, S_IRWXU);
-    
-    if(-1 == fd) {
-        printf("\nOpen failed with error [%s]\n", strerror(errno));
-        return 1;
-    }
-    else {
-        printf("\n\bFile Opened Successfully.\n");
-        // Therefore do other things.
-
-
-        
-
-
-
-    }
-
-    close(fd);
-    printf("\n\bFile Closed Successfully.\n");
-
-    printf ("\n\nEnding Program..\n\n");
+    printf ("\n ----------------\n| Ending Program |\n ----------------\n\n");
     return 0;
 }

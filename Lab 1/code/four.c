@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
 
     // checks if correct arguments are given
     if(3 != argc) {
-        printf("\nPLease provide a source and destination location.\n");
+        printf("\nPlease provide a source and destination location.\n");
         return 1;
     }
 
