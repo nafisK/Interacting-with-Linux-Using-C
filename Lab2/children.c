@@ -9,22 +9,17 @@ Assignment 2 by Nafis Khan
 
 int main (int argc, char* argv[]) {
 
-    // checks if correct arguments are given
-    if(1 != argc) {
-        printf("\nPlease provide appropriate arguments.\n");
-        return 1;
-    }
-
     // printf("Parent Process, PID: %d\n", getpid());
     pid_t statusOne, statusTwo;
 
     // forking to create a new child process
     int childOne = fork();
-
-    // If childOne != 0, then parent process
-    // else child process
-	if (childOne != 0){
-
+    if(childOne == 0) {
+        // print that you are the child
+        printf("I am child one, my PID is: %d\n", getpid());
+    }
+    else {
+        
         // creates child two
         int childTwo = fork();
 
@@ -41,12 +36,9 @@ int main (int argc, char* argv[]) {
             // this will get executed after both children have been terminated
             printf("I am the parent with PID %d\n", getpid());
         }
-        
-    }else {
-        // print that you are the child
-        printf("I am child one, my PID is: %d\n", getpid());
     }
-    
+
+   
     
     return 0;
 }
