@@ -9,39 +9,44 @@ Assignment 2 by Nafis Khan
 
 int main (int argc, char* argv[]) {
 
-    // checks if correct arguments are given
-    if(1 != argc) {
-        printf("\nPlease provide appropriate arguments.\n");
-        return 1;
-    }
-
     int a = 10,
         b = 25,
         fq = 0,
         fr = 0;
 
-    fq = fork();
+    printf("Starting Parent Process: %d\n\n",getpid());
 
-    if (fq == 0) {
+
+    fq = fork();    // fork a child - call it Process Q
+
+    if (fq == 0) {  // child successfully created
         a = a + b;
         // print vals of a, b and process_id
+        printf("fq Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+        printf("Value of Parent Currently: %d\n\n", getppid());
 
         fr = fork();
         if (fr != 0) {
             b = b + 20;
             // print values of a, b and process_id
+            printf("fr Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+            printf("Value of Parent Currently: %d\n\n", getppid());
 
         } 
         else {
-        a = (a * b) + 30;
-        // print values of a, b and process_id
+            a = (a * b) + 30;
+            // print values of a, b and process_id
+            printf("fr UN-Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+            printf("Value of Parent Currently: %d\n\n", getppid());
 
         }   
     }
     else {
         b = (a + b) - 5;
         // print values of a, b and process_id
-        
+        printf("fq UN-Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+        printf("Value of Parent Currently: %d\n\n", getppid());
+
     }
     
 
