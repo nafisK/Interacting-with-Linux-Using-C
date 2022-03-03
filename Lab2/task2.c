@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
         fq = 0,
         fr = 0;
 
-    printf("Starting Parent Process: %d\n\n",getpid());
+    printf("Starting Parent Process: %d\n\n", getpid());
 
 
     fq = fork();    // fork a child - call it Process Q
@@ -22,21 +22,21 @@ int main (int argc, char* argv[]) {
     if (fq == 0) {  // child successfully created
         a = a + b;
         // print vals of a, b and process_id
-        printf("fq Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+        printf("Q Child:\na: %d, b: %d, and child process id: %d\n", a, b, getpid());
         printf("Value of Parent Currently: %d\n\n", getppid());
 
         fr = fork();
         if (fr != 0) {
             b = b + 20;
             // print values of a, b and process_id
-            printf("fr Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+            printf("R Parent:\na: %d, b: %d, and child process id: %d\n", a, b, getpid());
             printf("Value of Parent Currently: %d\n\n", getppid());
 
         } 
         else {
             a = (a * b) + 30;
             // print values of a, b and process_id
-            printf("fr UN-Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+            printf("R Child:\na: %d, b: %d, and child process id: %d\n", a, b, getpid());
             printf("Value of Parent Currently: %d\n\n", getppid());
 
         }   
@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
     else {
         b = (a + b) - 5;
         // print values of a, b and process_id
-        printf("fq UN-Successful:\na: %d, b: %d, and process id: %d\n", a, b, getpid());
+        printf("Q Parent:\na: %d, b: %d, and child process id: %d\n", a, b, getpid());
         printf("Value of Parent Currently: %d\n\n", getppid());
 
     }

@@ -9,6 +9,8 @@ Assignment 2 by Nafis Khan
 
 int main (int argc, char* argv[]) {
 
+    pid_t pidChildOne, pidChildTwo;
+
     // create child one
         // use argument and mod to calculate sum
         // print sum
