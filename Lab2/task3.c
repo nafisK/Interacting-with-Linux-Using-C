@@ -17,8 +17,11 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
+    // vars
     int num, sum = 0;
     pid_t pidChildOne, pidChildTwo;
+
+    // converting string arg to int
     num = atoi(argv[1]);
 
     // forking to create a new child process
@@ -26,6 +29,8 @@ int main (int argc, char* argv[]) {
     if(childOne == 0) {
         // print that you are the child
         printf("\nChild One:\n");
+        
+        // printing 1 + 3 + 4 ...
         for (int i = 1; i <= num; i += 2) {
                 sum += i;
                 printf("%d + ", i);
@@ -43,7 +48,7 @@ int main (int argc, char* argv[]) {
 
         // if childTwo == 0, then it is the child, else parent
         if (childTwo == 0) {
-            // printf("I am child two, my PID is: %d\n", getpid());
+            // printing 2 + 4 + ...
             printf("Child Two:\n");
             for (int i = 2; i <= num; i += 2) {
                     sum += i;
