@@ -24,9 +24,8 @@ int main(void){
         // prints all the necessary info
         // -l for cleaner view
         // -a for hidden files
-        // -x for files only in currect folder
         // -o for removing unnecessary info
-		char *argv[] = {"ls", "-laxo", NULL};
+		char *argv[] = {"ls", "-lao", NULL};
 		execvp(argv[0], argv);
 		printf("execvp Failed\n");	
 	}
