@@ -10,36 +10,64 @@
     Lab 3 by Nafis Khan
 */
 
-int main(void) 
-{
-	int fd1, fd2;
+int main(int argc, char *argv[]) {
+  
+    // Name of files
+    char* fileName1 = "destination1.txt";
+    char* fileName2 = "destination2.txt";
 
-	errno = 0;
-    // Opens or Creates 'destination.txt' file with read and write permission
-    char* file1 = "destination1.txt";
-    char* file2 = "destination2.txt";
 
-	fd1 = open(file1, O_CREAT | O_RDWR, S_IRWXU);
-													
-	if (fd1 == -1) {
-		printf("Failed to open(): [%s]\n", strerror(errno));
-	}
-	else {
-		printf("%s opened successfully\n", file1);
-	}
-	close(fd1);
+    /* File One */
 
-	
-	fd2 = open(file2, O_CREAT | O_RDWR, S_IRWXU); // Opens and creates "destination2.txt" with read-write permissions.
+    // opens in read, write Or creates in read and write mode
+    int fd1 = open(fileName1, O_RDONLY | O_WRONLY | O_CREAT, 00700);
 
-	if (fd2 == -1) {
-		printf("Failed to open(): [%s]\n", strerror(errno));
-	}
-	else {
-		printf("%s opened successfully\n", file2);
-	}
+    if (fd1 < 0) {
+        // error with opening file
+        printf("%s could not be opened.\n", fileName1);
+        perror("open()"); /* This will explain why */
+        return 1;
+    } else {
+        printf("%s opened Successfully.\n", fileName1);
+    }
 
-	close(fd2);
+    // closing file 1
+    int close1 = close(fd1);
+    // error handling
+    if (close1 < 0) {
+        printf("Fail to close %i.", close1);
+        perror("close");
+        return 1;
 
-return 0;
-}
+    } else {
+        printf("%s closed Successfully.\n", fileName1);
+    }
+
+    /* File Two */
+
+    // opens in read, write Or creates in read and write mode
+    int fd2 = open(fileName2, O_RDONLY | O_WRONLY | O_CREAT, 00700);
+
+    if (fd2 < 0) {
+        // error with opening file
+        printf("%s could not be opened.\n", fileName2);
+        perror("open()"); /* This will explain why */
+        return 1;
+    } else {
+        printf("%s opened Successfully.\n", fileName2);
+    }
+
+    // closing file 1
+    int close2 = close(fd2);
+    // error handling
+    if (close2 < 0) {
+        printf("Fail to close %i.", close2);
+        perror("close");
+        return 1;
+
+    } else {
+        printf("%s closed Successfully.\n", fileName2);
+    }
+
+    return 0;
+} 
