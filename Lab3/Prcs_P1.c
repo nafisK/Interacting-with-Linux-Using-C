@@ -11,6 +11,8 @@
 */
 
 int main(int argc, char *argv[]) {
+
+    printf("\nRunning Prcs_P1.c.\n");
   
     // Name of files
     char* fileName1 = "destination1.txt";
@@ -19,13 +21,13 @@ int main(int argc, char *argv[]) {
 
     /* File One */
 
-    // opens in read, write Or creates in read and write mode
+    // opens in read & write mode || creates in read & write mode
     int fd1 = open(fileName1, O_RDONLY | O_WRONLY | O_CREAT, 00700);
 
     if (fd1 < 0) {
         // error with opening file
         printf("%s could not be opened.\n", fileName1);
-        perror("open()"); /* This will explain why */
+        perror("open()");
         return 1;
     } else {
         printf("%s opened Successfully.\n", fileName1);
@@ -38,20 +40,22 @@ int main(int argc, char *argv[]) {
         printf("Fail to close %i.", close1);
         perror("close");
         return 1;
-
     } else {
         printf("%s closed Successfully.\n", fileName1);
     }
 
+
+
+
     /* File Two */
 
-    // opens in read, write Or creates in read and write mode
+    // opens in read & write mode || creates in read & write mode
     int fd2 = open(fileName2, O_RDONLY | O_WRONLY | O_CREAT, 00700);
 
     if (fd2 < 0) {
         // error with opening file
         printf("%s could not be opened.\n", fileName2);
-        perror("open()"); /* This will explain why */
+        perror("open()");
         return 1;
     } else {
         printf("%s opened Successfully.\n", fileName2);
@@ -64,7 +68,6 @@ int main(int argc, char *argv[]) {
         printf("Fail to close %i.", close2);
         perror("close");
         return 1;
-
     } else {
         printf("%s closed Successfully.\n", fileName2);
     }

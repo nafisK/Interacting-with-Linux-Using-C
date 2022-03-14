@@ -12,115 +12,104 @@
 
 int main (int argc, char* argv[]) {
 
+    printf("\nRunning Prcs_P2.c.\n");
+
     char* sourceFile = "source.txt";
     char* fileName1 = "destination1.txt";
     char* fileName2 = "destination2.txt";
 
     /* creating file descriptors for all necessary files */
 
-    // Only read needed
+    // Opening to read
     int source = open(sourceFile, O_RDONLY);
-    // only write needed
+    // Opening to write
     int fd1 = open(fileName1, O_WRONLY);
     int fd2 = open(fileName2, O_WRONLY);
 
-    // error handling the fd's
+    // error handling all the fd's
     if(source < 0){
         printf("%s could not be opened.\n", sourceFile);
         perror("open()");
         return 1;
-
-    } else if (fd1 < 0) {
+    } 
+    if (fd1 < 0) {
         printf("%s could not be opened.\n", fileName1);
         perror("open()"); 
         return 1;
 
-    } else if (fd2 < 0){
+    } 
+    if (fd2 < 0){
         printf("%s could not be opened.\n", fileName2);
         perror("open()");
         return 1;
-
     }
 
 
-
+    /* Reading and Writing to all files using FD's */
     int read_file;
-    char buffer[150];
-    char buffer2[150];
+    char mainBuffer[150];
+    char destOneBuffer[100];
+    char destTwoBuffer[50];
 
-    // 150 at a time
     // 0 - 99 goes into destination 1
     // 100 - 149 goes into destination 2
-    while((read_file = read(source,buffer,150)) != 0) {
-      // Error message if failed to read
-      if (read_file < 0) {
-        printf("Fail to read.");
-        perror("read \n");
-        return 1;
-      }
+    while(read(source, mainBuffer, 150) != 0) {
 
-      // 1. Read the next 100 characters from source.txt, and among characters read, replace each char-acter ’1’ with character ’L’ and all characters are then written in destination1.txt
-      for(int i = 0; i < 100; i++) {
-        if(buffer[i] == '1') {
-          buffer[i] = 'L';
+        // copying first 100 chars to separate buffer
+        for(int i = 0; i < 100; i++) {
+            if(mainBuffer[i] == '1') 
+                destOneBuffer[i] = 'L';
+            else 
+                destOneBuffer[i] = mainBuffer[i];
         }
-      }
-      for(int i = 100; i < 150; i++) {
-        if(buffer[i] == '1') {
-          buffer[i] = '1';
-        }
-      }
-      read_file = write(fd1, buffer, read_file); // Write to destination1.txt
-      if (read_file < 0) { // Error message if failed to write
-        printf("Fail to write to destination1.txt");
-        perror("write \n");
-        return 1;
-      }
 
+        // writing 100 chars to destination 1 
+        if (write(fd1, destOneBuffer, sizeof(destOneBuffer)) < 0) {
+            printf("Could not write to %s.\n", fileName1);
+            perror("write()\n");
+            return 1;
+        }
 
-      // 2. Then the next 50 characters are read from source.txt, and among characters read, replace each character ’3’ with character ’E’ and all characters are then written in destination2.txt.
-      for(int i = 0; i < 100; i++) {
-        buffer2[i] = buffer[i];
-        if (buffer2[i] == 'L'){
-          buffer2[i] = '1';
+        // copying next 50 chars to separate buffer
+        int destIndex = 0;
+        for(int i = 100; i < 150; i++) {
+            if(mainBuffer[i] == '3') 
+                destTwoBuffer[destIndex] = 'E';
+            else 
+                destTwoBuffer[destIndex] = mainBuffer[i];
+            destIndex++;
         }
-      }
-      for(int i = 100; i < 150; i++) {
-        buffer2[i] = buffer[i];
-        if (buffer2[i] == '3') {
-          buffer2[i] = 'E';
+
+        // writing 50 chars to destination 2
+        if (write(fd2, destTwoBuffer, sizeof(destTwoBuffer)) < 0) {
+            printf("Could not write to %s.\n", fileName2);
+            perror("write()\n");
+            return 1;
         }
-      }
-      read_file = write(fd2, buffer2, read_file); // Write to destination1.txt
-      if (read_file < 0) { // Error message if failed to write
-        printf("Fail to write to destination2.txt");
-        perror("write \n");
-        return 1;
-      }
 
     }
 
-    
-
-    // Closing files
+    // Closing/Unlinking files
     if (close(source) < 0) {
-        printf("Fail to close source file");
+        printf("Failed to close %s file.", sourceFile);
         perror("close");
         return 1;
 
-    } else if (close(fd1) < 0) {
-        printf("Fail to close destination1.txt");
+    } 
+    if (close(fd1) < 0) {
+        printf("Failed to close %s file.", fileName1);
         perror("close");
         return 1;
 
-    } else if (close(fd2) < 0) {
-        printf("Fail to close destination2.txt");
+    } 
+    if (close(fd2) < 0) {
+        printf("Failed to close %s file.", fileName2);
         perror("close");
         return 1;
 
-    } else {
-        printf("\nClosed Successfully. \n");
-    }
+    } 
+    
+    printf("Successfully Copied Data and Files Closed Successfully.\n");
 
     return 0;
 }

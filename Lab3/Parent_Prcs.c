@@ -11,6 +11,15 @@ int main (int argc, char* argv[]) {
     // Vars
     int forkOne = 0, forkTwo = 0, statOne = 0, statTwo = 0;
 
+    // checking if file exists
+    int checkOne, checkTwo;
+    if( access("Prcs_P1.out", F_OK ) != 0 ) {
+        printf("Prcs_P1.out does not exist.\n");
+    }
+    if( access("Prcs_P2.out", F_OK ) != 0 ) {
+        printf("Prcs_P2.out does not exist.\n");
+    }
+
     // Forking First Child
     forkOne = fork();
     if (forkOne < 0) { 
@@ -22,7 +31,7 @@ int main (int argc, char* argv[]) {
     // child process
     else if (forkOne == 0) {
         // executing compiled Prcs_P1 file
-        char *args[] = {NULL};
+        char *args[] = { NULL };
         execv("./Prcs_P1.out", args);
     } 
     // parent process
@@ -41,7 +50,7 @@ int main (int argc, char* argv[]) {
     // Child Process
     else if (forkTwo == 0) {
         // executing compiled Prcs_P2 file
-        char *args[] = {NULL};
+        char *args[] = { NULL };
         execv("./Prcs_P2.out", args);
     } else {
         waitpid(forkTwo, &statTwo, 0);
