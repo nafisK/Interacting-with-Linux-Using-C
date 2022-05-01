@@ -11,10 +11,10 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // x = num of chapts || y = num of hw's in each chapter || numStudents = total number of students in file
+    // x = num of chapts || y = num of hw's in each chapter || numStu = total number of students in file
     int x;                                  
     int y;                                  
-    int numStudents = 10;
+    int numStu = 10;
 
     // member vars needed for program
     int currentHomework = 0;
@@ -28,17 +28,21 @@ int main(int argc, char* argv[]) {
     scanf("%d", &y);
     printf("\n");
 
-    // Main Program Process
-    const int numHomeworks = x * y;                         // finding number of columns
-    double hwGrades[numHomeworks][numStudents];             // 2D array for storing the grades    
-    double avgGrade[numHomeworks];                          // stores all the final average grades
-
+    /* Main Program Process */
     
+    // finding number of columns
+    const int numHomeworks = x * y;
+    // 2D array for storing the grades 
+    double hwGrades[numHomeworks][numStu];
+    // stores all the final average grades
+    double avgGrade[numHomeworks];
+    
+    // reading the file
     char* fileName = argv[1];
     FILE *file = fopen(fileName, "read");
 
     // reading and storing grades into array
-    for (int i = 0; i < numStudents; i++) {
+    for (int i = 0; i < numStu; i++) {
         for (int j = 0; j < numHomeworks; j++) {
             fscanf(file, "%lf", &hwGrades[j][i]);
         }
@@ -62,13 +66,13 @@ int main(int argc, char* argv[]) {
                 pid_t workerProcess = fork();
                 if(workerProcess == 0) {
 
-                    for (int i = 0; i < numStudents; i++){
+                    for (int i = 0; i < numStu; i++){
                         // total of each column vals or homework
                         total_score += hwGrades[currentHomework][i];
                     }
 
                     // calculating the average of each homework and storing in array
-                    avgGrade[currentHomework] = total_score / numStudents;
+                    avgGrade[currentHomework] = total_score / numStu;
                     printf("Chapter: %d, Homework: %d \nAverage Grade: %.2f.\n\n", (chapterCounter + 1), (homeworkCounter + 1), avgGrade[currentHomework]);
                     exit(0); 
                 } 
