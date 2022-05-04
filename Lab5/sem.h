@@ -46,7 +46,7 @@ void sem_create(int semid, int initval)
 
     s.val=initval;
     if((semval=semctl(semid,0,SETVAL,s))<0)
-    printf("\n Erroe in executing semctl");
+    printf("\n Error in executing semctl");
 }
 
 /*

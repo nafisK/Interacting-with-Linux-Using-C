@@ -41,11 +41,11 @@ int main()
 	srand(time(NULL));
 
 	// mutex handling check
-	if((mutex= (IPC_PRIVATE, 1 ,PERMS | IPC_CREAT)) == -1)
-	{
+	if((mutex=semget(IPC_PRIVATE, 1 ,PERMS | IPC_CREAT)) == -1) {
 	 printf("Failed to create mutex\n");
   	 exit(1);
 	}
+
 
 	// Initialize the semaphore mutex.
 	sem_create(mutex,1);
@@ -294,7 +294,3 @@ int main()
 
 	
 }
-
-
-
-
