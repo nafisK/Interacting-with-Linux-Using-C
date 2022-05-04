@@ -11,17 +11,10 @@
 #define FALSE      			 1
 #define PERMS 0666 // Read and Write Permissions
 
-// #define NumOfDepositAttempt  5           /* How many times Dad will deposit money */
-// #define NumOfWithdrawAttempt 20          /* Total number of attempts SON_1 and SON_2 has */
+#define NumOfDepositAttempt  5           /* How many times Dad will deposit money */
+#define NumOfWithdrawAttempt 20          /* Total number of attempts SON_1 and SON_2 has */
 
-// #define DepositAmount        80         /* The amound of money Dad deposits at a time */
-// #define WithdrawAmount       20         /* The amount of money Son withdraws at a time */
-// #define initBalance          40
-
-#define NumOfDepositAttempt  3           /* How many times Dad will deposit money */
-#define NumOfWithdrawAttempt 5          /* Total number of attempts SON_1 and SON_2 has */
-
-#define DepositAmount        5         /* The amound of money Dad deposits at a time */
+#define DepositAmount        80         /* The amound of money Dad deposits at a time */
 #define WithdrawAmount       20         /* The amount of money Son withdraws at a time */
 #define initBalance          40
 
@@ -84,7 +77,8 @@ int main()
             sleep(r);
             //After r second Dad process reached the Bank.
 
-			P(mutex);//  The account balance is being accessed, so a mutex here is placed to prevent overwriting.
+			// disabling overwriting of balance
+			P(mutex);
 
 			printf("Dad is requesting to view the balance.\n"); //Dad is requesting to get hold of an ATM.
 			fp1 = fopen("balance.txt", "r+"); //Dad successfully got hold of the ATM.
@@ -105,11 +99,12 @@ int main()
 			fprintf(fp1, "%d \n", bal2);
 			fclose(fp1);
 			printf("Dad writes new balance = %d \n", bal2);
-			printf("Dad will deposit %d more time\n",N-i); //Dad depostited the money. 
+			printf("Dad will deposit %d more time\n",N-i); //Dad deposited the money. 
 			printf("\n");
 			sleep(rand()%10+1);	/* Dad will wait some time for requesting to see balance again.*/
 
-			V(mutex); // The Dad has finished doing updates, allow other process to access the balance.
+			// allowed updating balance
+			V(mutex);
 
 
 		}
@@ -139,9 +134,8 @@ int main()
                 sleep(r);
                 //After r second Son1 process reached the Bank.
                 
-				P(mutex); // Need a semaphore here because first son is attemping to access.
-
-
+				// disabling overwriting of balance
+				P(mutex); 
 
                 printf("SON_1 is requesting to view the balance.\n"); //Son_1 is requesting to get hold of the ATM.
 				fp3 = fopen("attempt.txt" , "r+"); //Son_1 successfully got hold of the ATM.
@@ -164,6 +158,7 @@ int main()
 					fseek(fp2,0L, 0);
 					bal2 -=WithdrawAmount;
 
+					// checking for negative balance or improper withdrawals along with stopping extra cpu use and attempts
 					if (bal2 <= 0) {
 						printf("Not Enough Balance to withdraw amount $%d.\n", WithdrawAmount);
 						fseek(fp3,0L, 0); //SON_1 will write the number of  attempt remaining in the attampt.txt file.
@@ -176,7 +171,7 @@ int main()
 					else {
 						fprintf(fp2,"%d\n", bal2);
 						fclose(fp2);
-						printf("SON_1 withdrawed %d. New Balance: %d \n",WithdrawAmount, bal2);
+						printf("SON_1 withdrew %d. New Balance: %d \n",WithdrawAmount, bal2);
 							
 						fseek(fp3,0L, 0); //SON_1 will write the number of  attempt remaining in the attampt.txt file.
 						N_Att -=1;
@@ -187,8 +182,10 @@ int main()
 					
 				}
 				printf("\n");
-				sleep(rand()%10+1); //SON_1 will wait some time before the next request.
-				V(mutex); // First son has finished, allow other processes.
+				sleep(rand()%10+1); //SON_1 will wait some time before the next request
+
+				// allowed updating balance
+				V(mutex); 
 
 			}
 		}
@@ -216,8 +213,8 @@ int main()
                     sleep(r);
                     //After r second Son2 process reached the Bank.
 
-					P(mutex); // Second son attempting to access, thus we have a semaphore.
-
+					// disabling overwriting of balance
+					P(mutex); 
 
                     printf("SON_2 is requesting to view the balance.\n"); //Son_2 is requesting to get hold of the ATM.
 					fp3 = fopen("attempt.txt" , "r+"); //Son_2 successfully got hold of the ATM.
@@ -238,7 +235,7 @@ int main()
 						fseek(fp2,0L, 0);
 						bal2 -=WithdrawAmount;
 					
-
+						// checking for negative balance or improper withdrawals along with stopping extra cpu use and attempts
 						if (bal2 <= 0) {
 							printf("Not Enough Balance to withdraw amount $%d.\n", WithdrawAmount);
 							fseek(fp3,0L, 0); //SON_2 will write the number of  attempt remaining in the attampt.txt file.
@@ -252,7 +249,7 @@ int main()
 							fprintf(fp2,"%d\n", bal2);
 							fclose(fp2);
 
-							printf("SON_2 withdrawed %d. New Balance: %d \n",WithdrawAmount, bal2);
+							printf("SON_2 withdrew %d. New Balance: %d \n",WithdrawAmount, bal2);
 							fseek(fp3,0L, 0); //SON_2 will write the number of  attempt remaining in the attempt.txt file.
 							N_Att -=1;
 							fprintf(fp3, "%d\n", N_Att);
@@ -264,15 +261,16 @@ int main()
 					}
 					printf("\n");
 					sleep(rand()%10+1);//SON_2 will wait some time before the next request.
-					V(mutex); //Second son has finished doing updates.
 
-				}
+					// allowed updating balance
+					V(mutex);
+
+				}	
 			}
 			else
 			{	
 				
 				//Now parent process waits for the child processes to finish
-				
 				pid = wait(&status);
               	printf("child(pid = %d) exited with the status %d. \n", pid, status);
 
@@ -281,15 +279,16 @@ int main()
 
               	pid = wait(&status);
               	printf("child(pid = %d) exited with the status %d. \n", pid, status);
+
 			}
 			exit(0);
 		}
 		exit(0);
 	}
 
-	semkill(mutex);
 
 	exit(0);
+	semkill(mutex);
 
 
 	
