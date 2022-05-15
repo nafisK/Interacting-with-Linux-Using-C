@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,117 +5,174 @@
 #include <time.h>
 #include "sem.h"
 
+/*
+  Assignment 5 by Nafis Khan
+*/
+
 int main() {
   // Setting up variables
   int pid, status;
-  int counter = 0; // remove this to be more truthful to the problem
+  int counter = 0;
 
-  // Setting up the semaphors
-  int lock_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
-  int agent_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
-  int tobacco_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
-  int paper_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
+  // semaphores needed
   int matches_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
+  int paper_sem   = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
+  int tobacco_sem = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
+  int agent_sem   = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
+  int lock_sem    = semget(IPC_PRIVATE, 1, 0666|IPC_CREAT);
 
-  // Initializing semaphors
-  // All semaphores except for lock_sem are initialized to 0. "lock is initialized to 1"
-  sem_create(lock_sem, 1);
-  sem_create(agent_sem, 0);
-  sem_create(tobacco_sem, 0);
-  sem_create(paper_sem, 0);
+  /* creating all semaphores */
+  // initialized to 0
   sem_create(matches_sem, 0);
+  sem_create(paper_sem, 0);
+  sem_create(tobacco_sem, 0);
+  sem_create(agent_sem, 0);
 
-  // Create child processes that will do the updates
+  // initialized to 1
+  sem_create(lock_sem, 1);
+
+  // error handling
   if ((pid = fork()) == -1) {
-		//fork failed!
 		perror("fork");
 		exit(1);
 	}
   
-  //First Child Process. The agent smoker process
+  // First child - Agent process
   if (pid == 0) { 
-    while (counter < 10) { // while (1) { // replace with this to be more truthful to the problem
-      P(lock_sem); // lock sem sleeps
-      int randNum = (rand() % 3) + 1; // Pick a random number from 1-3
-      if (randNum == 1) { // if random number = 1, put tobacco and paper on table
-        printf("\nAgent places tobacco on the table\n");
+
+    // repeats x number of times as mentioned in the prompt
+    while (counter < 10) {
+      // locking semaphore
+      P(lock_sem);
+
+      // getting a random number between 1 - 3 to pick what to put on table as the Agent
+      int random_number = (rand() % 3) + 1;
+
+      // tobacco and paper
+      if (random_number == 1) {
+
+        // agent actions
+        printf("\nAgent places tobacco on the table.\n");
         printf("Agent places paper on the table.\n");
-        V(matches_sem); // Wake up smoker with match
-      } else if (randNum == 2) {
-        printf("\nAgent places tobacco on the table\n");
+        // waking up smoker with match
+        V(matches_sem);
+
+      } 
+      // tobacco and match
+      else if (random_number == 2) {
+
+        // agent actions
+        printf("\nAgent places tobacco on the table.\n");
         printf("Agent places match on the table.\n");
-        V(paper_sem); // Wake up smoker with paper
-      } else {
+        // waking up smoker with paper
+        V(paper_sem);
+
+      } 
+      // match and paper
+      else {
+
+        // agent actions
         printf("\nAgent places match on the table.\n");
         printf("Agent places paper on the table.\n");
-        V(tobacco_sem); // Wake up smoker with tobacco
+        // waking up smoker with tobacco
+        V(tobacco_sem);
+
       }
-      V(lock_sem); // lock sem wakes up
-      P(agent_sem); // Agent sleeps
+
+      // lock_sem wakes up and putting agent to sleep
+      V(lock_sem); 
+      P(agent_sem);
       counter += 1;
     }
-  } else {
+  } 
 
-    // Parent Process. Fork off another child process.
+  // parent process
+  else {
+
+    // error handling
     if ((pid = fork()) == -1) {
-      //fork failed!
       perror("fork");
       exit(1);
     }
   
-    if (pid == 0) { // Second child process. Tobacco smoker
+    // second child - tobacco process 
+    if (pid == 0) {
       while(1) {
-        P(tobacco_sem);  // tobacco sem sleeps right away
-        P(lock_sem); // lock sem sleeps
-        printf("Tobacco smoker picks up matches from the table.\n");
-        printf("Tobacco smoker picks up paper from the table.\n");
-        V(agent_sem); // wake the agent
-        V(lock_sem); // wake the lock sem
-        printf("Tobacco smoker makes a cigarette and goes to sleep.\n"); // Smoke (but don't inhale).
+
+        // tobacco and lock sem sleeps
+        P(tobacco_sem);
+        P(lock_sem);
+
+        // action texts
+        printf("Smoker with Tobacco picks up matches from the table.\n");
+        printf("Smoker with Tobacco picks up paper from the table.\n");
+
+        // waking up agent and lock_sem
+        V(agent_sem);
+        V(lock_sem);
+
+        // action text
+        printf("Smoker with Tobacco makes a cigarette and then smokes it.\n");
       }
     } else {
 
-      // Parent Process. Fork off another child process.
+      // parent process, forking for another child process.
       if ((pid = fork()) == -1) {
-        //fork failed!
         perror("fork");
         exit(1);
       }
     
-      if (pid == 0) { // Third child process. Paper smoker
+      // third child - paper smoker process 
+      if (pid == 0) {
         while(1) {
-          P(paper_sem);  // Sleep right away
-          P(lock_sem); // lock sem sleeps
-          printf("Paper smoker picks up tobacco from the table.\n");
-          printf("Paper smoker picks up matches from the table.\n");
-          V(agent_sem); // wake the agent
-          V(lock_sem); // wake the lock sem
-          printf("Paper smoker makes a cigarette and goes to sleep.\n"); // Smoke (but don't inhale).
+
+          // paper and lock_sem sleeps
+          P(paper_sem);
+          P(lock_sem);
+
+          // action texts
+          printf("Smoker with Paper picks up tobacco from the table.\n");
+          printf("Smoker with Paper picks up matches from the table.\n");
+
+          // paper and lock_sem wakes up
+          V(agent_sem);
+          V(lock_sem);
+
+          // action text
+          printf("Smoker with Paper makes a cigarette and then smokes it.\n");
         }
       } else {
 
-        // Parent Process. Fork off another child process.
+        // parent process, forking for another child process.
         if ((pid = fork()) == -1) {
-          //fork failed!
           perror("fork");
           exit(1);
         }
       
-        if (pid == 0) { // Fourth child porcess. Matches smoker
+        // fourth child - matches smoker process 
+        if (pid == 0) {
           while(1){
-            P(matches_sem);  // Sleep right away
-            P(lock_sem); // lock sem sleeps
-            printf("Matches smoker picks up tobacco from the table.\n");
-            printf("Matches smoker picks up paper from the table.\n");
-            V(agent_sem); // wake the agent
-            V(lock_sem); // wake the lock sem
-            printf("Matches smoker makes a cigarette and goes to sleep.\n"); // Smoke (but don't inhale).
+
+            // matches and lock_sem sleeps
+            P(matches_sem); 
+            P(lock_sem);
+
+            // action texts
+            printf("Smoker with Matches picks up tobacco from the table.\n");
+            printf("Smoker with Matches picks up paper from the table.\n");
+            
+            // matches and lock_sem wakes up
+            V(agent_sem);
+            V(lock_sem);
+
+            // action text
+            printf("Smoker with Matches makes a cigarette and then smokes it.\n");
           }
         } else {
           
-          // Process ends
+          // End process printout
           pid = wait(&status);
-					printf("\nProcess with pid = %d exited with the status %d. \n", pid, status);
+          printf("\nProcess with pid = %d exited with the status %d. \n", pid, status);
         }
       }
     }
