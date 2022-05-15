@@ -132,11 +132,8 @@ int main()
 				//Son1 process needs some time to go to the bank.
                 int r = rand()%5+1;
                 sleep(r);
-                //After r second Son1 process reached the Bank.
-                
-				// disabling overwriting of balance
-				P(mutex); 
-
+				
+                //After r second Son1 process reached the Bank
                 printf("SON_1 is requesting to view the balance.\n"); //Son_1 is requesting to get hold of the ATM.
 				fp3 = fopen("attempt.txt" , "r+"); //Son_1 successfully got hold of the ATM.
 				fscanf(fp3, "%d", &N_Att); // Son_1 Checks if he has more than 0 attempt remaining.
@@ -149,7 +146,8 @@ int main()
 				}
 				else
 				{
-                    
+					// disabling overwriting of balance
+					P(mutex); 
 
 					fp2 = fopen("balance.txt", "r+");//Son_1 reads the balance. 
 					fscanf(fp2,"%d", &bal2);
@@ -180,12 +178,12 @@ int main()
 						printf("Number of attempts remaining:%d \n", N_Att);	
 					}
 					
+					// allowed updating balance
+					V(mutex); 
+
 				}
 				printf("\n");
 				sleep(rand()%10+1); //SON_1 will wait some time before the next request
-
-				// allowed updating balance
-				V(mutex); 
 
 			}
 		}
@@ -211,11 +209,8 @@ int main()
 					//Son2 process needs some time to go to the bank.
                     int r = rand()%5+1;
                     sleep(r);
+
                     //After r second Son2 process reached the Bank.
-
-					// disabling overwriting of balance
-					P(mutex); 
-
                     printf("SON_2 is requesting to view the balance.\n"); //Son_2 is requesting to get hold of the ATM.
 					fp3 = fopen("attempt.txt" , "r+"); //Son_2 successfully got hold of the ATM.
 					fscanf(fp3, "%d", &N_Att); // Son_2 Checks if he has more than 0 attempt remaining.
@@ -227,7 +222,9 @@ int main()
 					}
 					else
 					{
-						
+						// disabling overwriting of balance
+						P(mutex); 
+
 						fp2 = fopen("balance.txt", "r+"); //Son_2 reads the balance. 
 						fscanf(fp2,"%d", &bal2);
 						printf("SON_2 reads balance. Available Balance: %d \n", bal2);
@@ -257,13 +254,12 @@ int main()
 							printf("Number of attempts remaining: %d \n", N_Att);
 						}
 						
-						
+						// allowed updating balance
+						V(mutex);
 					}
 					printf("\n");
 					sleep(rand()%10+1);//SON_2 will wait some time before the next request.
 
-					// allowed updating balance
-					V(mutex);
 
 				}	
 			}
